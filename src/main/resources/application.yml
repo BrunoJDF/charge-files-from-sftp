@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: file-attachment
+server:
+  port: ${PORT:8080}
+config:
+  sftp:
+    host: ${SFTP_HOST:localhost}
+    port: ${SFTP_PORT:2222}
+    user: ${SFTP_USER:foo}
+    password: ${SFTP_PWD:pass}
+  path:
+    local-path: D:/file/upload/
+    remote-path:
