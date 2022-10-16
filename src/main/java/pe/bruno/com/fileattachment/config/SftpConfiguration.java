@@ -1,5 +1,6 @@
 package pe.bruno.com.fileattachment.config;
 
+import com.jcraft.jsch.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -24,4 +25,37 @@ public class SftpConfiguration {
     @Value("${config.path.remote-path}")
     private String remotePath;
 
+    public ChannelSftp createChannelSftp() {
+        JSch config = new JSch();
+        try {
+            Session session = config.getSession(this.getUser(), this.getHost(), Integer.parseInt(this.getPort()));
+            session.setConfig("StrictHostKeyChecking", "no");
+            session.setPassword(this.getPassword());
+            session.connect(5000);
+
+            Channel channel = session.openChannel("sftp");
+            channel.connect(5000);
+            return (ChannelSftp) channel;
+
+        } catch (JSchException e) {
+            throw new RuntimeException("Error JschException" + e.getMessage());
+        }
+    }
+
+    public void disconnectChannelSftp(ChannelSftp channelSftp) {
+        try {
+            if (channelSftp == null)
+                return;
+
+            if (channelSftp.isConnected()) {
+                channelSftp.disconnect();
+            }
+
+            if (channelSftp.getSession() != null) {
+                channelSftp.getSession().disconnect();
+            }
+        } catch (Exception ex) {
+            log.error("SFTP disconnect error", ex);
+        }
+    }
 }
