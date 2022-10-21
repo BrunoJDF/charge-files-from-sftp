@@ -1,4 +1,4 @@
-package pe.bruno.com.fileattachment.service;
+package pe.bruno.com.fileattachment.application.service.impl;
 
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.ChannelSftp.LsEntry;
@@ -6,8 +6,9 @@ import com.jcraft.jsch.SftpException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import pe.bruno.com.fileattachment.application.dto.FileResponseDto;
+import pe.bruno.com.fileattachment.application.service.FileService;
 import pe.bruno.com.fileattachment.config.SftpConfiguration;
-import pe.bruno.com.fileattachment.model.SftpResponse;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -18,10 +19,11 @@ import java.util.Vector;
 @Service
 @AllArgsConstructor
 @Slf4j
-public class SftpService {
+public class FileServiceImpl implements FileService {
     private final SftpConfiguration configuration;
 
-    public SftpResponse downloadFile(String remoteFilePath) {
+    @Override
+    public FileResponseDto downloadFile(String remoteFilePath) {
         ChannelSftp channelSftp = configuration.createChannelSftp();
         try {
             Vector<?> fileList = channelSftp.ls(remoteFilePath);
@@ -30,7 +32,7 @@ public class SftpService {
                     getAllFilesAction(o, channelSftp, remoteFilePath);
                 });
             }
-            return SftpResponse.builder()
+            return FileResponseDto.builder()
                     .message("Success")
                     .folderFilesSize(fileList.size())
                     .path(configuration.getLocalPath())
@@ -42,12 +44,13 @@ public class SftpService {
             configuration.disconnectChannelSftp(channelSftp);
         }
 
-        return SftpResponse.builder()
+        return FileResponseDto.builder()
                 .message("Error")
                 .build();
     }
 
-    private void getAllFilesAction(Object o, ChannelSftp channelSftp, String remoteFilePath) {
+    @Override
+    public void getAllFilesAction(Object o, ChannelSftp channelSftp, String remoteFilePath) {
         OutputStream outputStream;
         try {
             if (o instanceof LsEntry) {

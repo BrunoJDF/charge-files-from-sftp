@@ -1,8 +1,17 @@
+server:
+  port: ${PORT:8080}
 spring:
   application:
     name: file-attachment
-server:
-  port: ${PORT:8080}
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driverClassName: org.h2.Driver
+    username: ${USER_DB:sa}
+    password: ${PWD_DB:sa}
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+  quartz:
+    job-store-type: memory
 config:
   sftp:
     host: ${SFTP_HOST:localhost}
@@ -11,4 +20,4 @@ config:
     password: ${SFTP_PWD:pass}
   path:
     local-path: D:/file/upload/
-    remote-path:
+    remote-path: /upload/
