@@ -5,5 +5,5 @@ import org.springframework.stereotype.Repository;
 import pe.bruno.com.fileattachment.persistence.model.JobSchedule;
 
 @Repository
-public interface FileRepository extends CrudRepository<JobSchedule, Integer> {
+public interface JobRepository extends CrudRepository<JobSchedule, Integer> {
 }

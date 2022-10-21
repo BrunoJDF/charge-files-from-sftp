@@ -10,4 +10,5 @@ public interface FileController {
 
     @GetMapping("/download")
     FileResponseDto downloadFileFromSftp(@RequestParam String path);
+
 }

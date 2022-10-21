@@ -9,7 +9,7 @@ import javax.persistence.*;
 @Table
 @Getter
 @Setter
-public class JobParams {
+public class JobParam {
 
     @Id
     private int paramId;

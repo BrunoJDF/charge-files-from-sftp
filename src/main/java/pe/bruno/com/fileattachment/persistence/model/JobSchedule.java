@@ -20,5 +20,5 @@ public class JobSchedule {
     private String jobName;
 
     @OneToMany(mappedBy = "jobSchedule")
-    private List<JobParams> params;
+    private List<JobParam> params;
 }
