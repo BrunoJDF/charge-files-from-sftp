@@ -3,14 +3,15 @@ package pe.bruno.com.fileattachment.web.controller.impl;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-import pe.bruno.com.fileattachment.application.dto.JobDto;
+import org.springframework.web.bind.annotation.RestController;
+import pe.bruno.com.fileattachment.application.dto.CreateJobScheduleDto;
+import pe.bruno.com.fileattachment.application.dto.JobScheduleDto;
 import pe.bruno.com.fileattachment.application.service.JobService;
 import pe.bruno.com.fileattachment.web.controller.JobController;
 
 import java.util.List;
 
-@Service
+@RestController
 @Slf4j
 @AllArgsConstructor
 public class JobControllerImpl implements JobController {
@@ -18,17 +19,17 @@ public class JobControllerImpl implements JobController {
     private final JobService service;
 
     @Override
-    public ResponseEntity<JobDto> getJob(String id) {
-        return null;
+    public ResponseEntity<JobScheduleDto> getJob(String id) {
+        return ResponseEntity.ok(service.getJob(Integer.parseInt(id)));
     }
 
     @Override
-    public List<JobDto> getAllJob() {
-        return null;
+    public List<JobScheduleDto> getAllJob() {
+        return service.getAllJob();
     }
 
     @Override
-    public ResponseEntity<JobDto> create(JobDto request) {
+    public ResponseEntity<JobScheduleDto> create(CreateJobScheduleDto request) {
         return ResponseEntity.ok(service.create(request));
     }
 

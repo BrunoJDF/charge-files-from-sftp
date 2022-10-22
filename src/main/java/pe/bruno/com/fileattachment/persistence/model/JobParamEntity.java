@@ -9,7 +9,7 @@ import javax.persistence.*;
 @Table
 @Getter
 @Setter
-public class JobParam {
+public class JobParamEntity {
 
     @Id
     private int paramId;
@@ -20,5 +20,5 @@ public class JobParam {
 
     @ManyToOne
     @JoinColumn(name = "job_schedule_id", insertable = false, updatable = false, nullable = false)
-    private JobSchedule jobSchedule;
+    private JobScheduleEntity jobSchedule;
 }

@@ -10,7 +10,7 @@ import java.util.List;
 @Table
 @Getter
 @Setter
-public class JobSchedule {
+public class JobScheduleEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,5 +20,5 @@ public class JobSchedule {
     private String jobName;
 
     @OneToMany(mappedBy = "jobSchedule")
-    private List<JobParam> params;
+    private List<JobParamEntity> params;
 }

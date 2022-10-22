@@ -27,7 +27,7 @@ public class JobConfiguration {
         return new SpringBeanJobFactory() {
             @Override
             protected Object createJobInstance(TriggerFiredBundle bundle) throws Exception {
-                log.info("job injection");
+                log.debug("job injection");
                 var job = super.createJobInstance(bundle);
                 applicationContext.getAutowireCapableBeanFactory()
                         .autowireBean(job);
