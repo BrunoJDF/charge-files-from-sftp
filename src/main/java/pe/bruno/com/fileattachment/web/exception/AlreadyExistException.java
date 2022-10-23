@@ -5,18 +5,4 @@ public class AlreadyExistException extends RuntimeException {
         super(message);
     }
 
-    public AlreadyExistException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public AlreadyExistException(Throwable cause) {
-        super(cause);
-    }
-
-    public AlreadyExistException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
-    }
-
-    public AlreadyExistException() {
-    }
 }

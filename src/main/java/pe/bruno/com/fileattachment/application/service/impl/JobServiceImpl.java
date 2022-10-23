@@ -15,7 +15,6 @@ import pe.bruno.com.fileattachment.persistence.repository.JobParamRepository;
 import pe.bruno.com.fileattachment.persistence.repository.JobScheduleRepository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Slf4j
@@ -27,10 +26,10 @@ public class JobServiceImpl implements JobService {
 
     @Override
     public JobScheduleDto create(CreateJobScheduleDto dto) {
-        var toSave = mapperFacade.map(dto, JobScheduleEntity.class);
-        return Optional.of(repository.save(toSave))
-                .map(jobScheduleEntity -> this.mapperFacade.map(jobScheduleEntity, JobScheduleDto.class))
-                .orElseThrow(() -> new RuntimeException("error al crear"));
+        return Try.of(() -> this.mapperFacade.map(dto, JobScheduleEntity.class))
+                .map(this.repository::save)
+                .map(saved -> this.mapperFacade.map(saved, JobScheduleDto.class))
+                .get();
     }
 
     @Override
