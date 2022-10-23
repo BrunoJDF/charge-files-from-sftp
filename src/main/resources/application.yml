@@ -4,12 +4,11 @@ spring:
   application:
     name: file-attachment
   datasource:
-    url: jdbc:h2:mem:testdb
-    driverClassName: org.h2.Driver
-    username: ${USER_DB:sa}
-    password: ${PWD_DB:sa}
+    url: jdbc:postgresql://localhost:5432/jobDb
+    username: ${USER_DB:root}
+    password: ${PWD_DB:root}
   jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
+    show-sql: true
   quartz:
     job-store-type: memory
 config:

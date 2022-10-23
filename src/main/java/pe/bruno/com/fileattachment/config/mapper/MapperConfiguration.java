@@ -4,11 +4,8 @@ import ma.glasnost.orika.CustomMapper;
 import ma.glasnost.orika.MappingContext;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
 import org.springframework.context.annotation.Configuration;
-import pe.bruno.com.fileattachment.application.dto.CreateJobScheduleDto;
-import pe.bruno.com.fileattachment.persistence.model.JobParamEntity;
+import pe.bruno.com.fileattachment.application.dto.JobScheduleDto;
 import pe.bruno.com.fileattachment.persistence.model.JobScheduleEntity;
-
-import java.util.ArrayList;
 
 @Configuration
 public class MapperConfiguration {
@@ -17,13 +14,14 @@ public class MapperConfiguration {
     }
 
     void jobScheduleDtoToJobScheduleEntity(DefaultMapperFactory defaultMapperFactory) {
-        defaultMapperFactory.classMap(CreateJobScheduleDto.class, JobScheduleEntity.class)
+        defaultMapperFactory.classMap(JobScheduleDto.class, JobScheduleEntity.class)
                 .byDefault()
-                .customize(new CustomMapper<CreateJobScheduleDto, JobScheduleEntity>() {
+                .customize(new CustomMapper<JobScheduleDto, JobScheduleEntity>() {
                     @Override
-                    public void mapAtoB(CreateJobScheduleDto jobScheduleDto, JobScheduleEntity jobScheduleEntity, MappingContext context) {
-                        var listParams = new ArrayList<JobParamEntity>();
-                        jobScheduleEntity.setParams(listParams);
+                    public void mapAtoB(JobScheduleDto jobScheduleDto, JobScheduleEntity jobScheduleEntity, MappingContext context) {
+                        if(!jobScheduleDto.getParams().isEmpty()) {
+
+                        }
                     }
                 })
                 .register();

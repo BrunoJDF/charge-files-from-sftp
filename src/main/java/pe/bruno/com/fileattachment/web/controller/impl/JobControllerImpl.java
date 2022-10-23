@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import pe.bruno.com.fileattachment.application.dto.CreateJobScheduleDto;
+import pe.bruno.com.fileattachment.application.dto.JobParamDto;
 import pe.bruno.com.fileattachment.application.dto.JobScheduleDto;
 import pe.bruno.com.fileattachment.application.service.JobService;
 import pe.bruno.com.fileattachment.web.controller.JobController;
@@ -36,5 +37,9 @@ public class JobControllerImpl implements JobController {
     @Override
     public ResponseEntity<Boolean> delete(String id) {
         return null;
+    }
+
+    public ResponseEntity<JobScheduleDto> addJobParam(JobParamDto param, String id) {
+        return ResponseEntity.ok(service.addJobParam(param, Integer.parseInt(id)));
     }
 }

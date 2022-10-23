@@ -3,6 +3,7 @@ package pe.bruno.com.fileattachment.web.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pe.bruno.com.fileattachment.application.dto.CreateJobScheduleDto;
+import pe.bruno.com.fileattachment.application.dto.JobParamDto;
 import pe.bruno.com.fileattachment.application.dto.JobScheduleDto;
 
 import java.util.List;
@@ -21,4 +22,7 @@ public interface JobController {
 
     @DeleteMapping("/{id}")
     ResponseEntity<Boolean> delete(@PathVariable String id);
+
+    @PostMapping("/{id}/params")
+    ResponseEntity<JobScheduleDto> addJobParam(@RequestBody JobParamDto param, @PathVariable String id);
 }

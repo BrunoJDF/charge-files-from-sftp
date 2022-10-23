@@ -2,6 +2,7 @@ package pe.bruno.com.fileattachment.persistence.model;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.*;
 
@@ -9,16 +10,21 @@ import javax.persistence.*;
 @Table
 @Getter
 @Setter
+@ToString
 public class JobParamEntity {
 
     @Id
-    private int paramId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+    @Basic
     @Column
     private String paramName;
+    @Basic
     @Column
     private String paramValue;
 
-    @ManyToOne
-    @JoinColumn(name = "job_schedule_id", insertable = false, updatable = false, nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "job_schedule_id")
     private JobScheduleEntity jobSchedule;
+
 }

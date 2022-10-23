@@ -15,6 +15,6 @@ public class FileJob implements Job {
 
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-        log.info("Execute job");
+        //log.info("Execute job");
     }
 }
