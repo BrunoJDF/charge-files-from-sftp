@@ -36,10 +36,15 @@ public class JobControllerImpl implements JobController {
 
     @Override
     public ResponseEntity<Boolean> delete(String id) {
-        return null;
+        return ResponseEntity.ok(service.deleteJobById(Integer.parseInt(id)));
     }
 
     public ResponseEntity<JobScheduleDto> addJobParam(JobParamDto param, String id) {
         return ResponseEntity.ok(service.addJobParam(param, Integer.parseInt(id)));
+    }
+
+    @Override
+    public ResponseEntity<JobScheduleDto> getJobByJobName(String jobName) {
+        return ResponseEntity.ok(service.getJobByJobName(jobName));
     }
 }

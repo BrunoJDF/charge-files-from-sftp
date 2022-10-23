@@ -25,4 +25,7 @@ public interface JobController {
 
     @PostMapping("/{id}/params")
     ResponseEntity<JobScheduleDto> addJobParam(@RequestBody JobParamDto param, @PathVariable String id);
+
+    @GetMapping("/find/name")
+    ResponseEntity<JobScheduleDto> getJobByJobName(@RequestParam("jobName") String jobName);
 }

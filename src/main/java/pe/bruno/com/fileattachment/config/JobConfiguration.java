@@ -13,7 +13,7 @@ import org.springframework.scheduling.quartz.JobDetailFactoryBean;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.scheduling.quartz.SimpleTriggerFactoryBean;
 import org.springframework.scheduling.quartz.SpringBeanJobFactory;
-import pe.bruno.com.fileattachment.application.job.FileJob;
+import pe.bruno.com.fileattachment.application.job.FileJobProcess;
 
 @Slf4j
 @Configuration
@@ -51,7 +51,7 @@ public class JobConfiguration {
     @Bean
     public JobDetailFactoryBean jobDetail() {
         JobDetailFactoryBean factoryBean = new JobDetailFactoryBean();
-        factoryBean.setJobClass(FileJob.class);
+        factoryBean.setJobClass(FileJobProcess.class);
         factoryBean.setDescription("Running JobDownloadFromSFTP...");
         factoryBean.setDurability(true);
         return factoryBean;

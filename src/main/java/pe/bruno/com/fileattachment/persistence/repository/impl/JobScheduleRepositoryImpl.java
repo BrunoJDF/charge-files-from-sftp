@@ -33,6 +33,16 @@ public class JobScheduleRepositoryImpl implements JobScheduleRepository {
 
     @Override
     public boolean delete(int id) {
-        return false;
+        return crudRepository.findById(id)
+                .map(toDelete -> {
+                    this.crudRepository.delete(toDelete);
+                    return true;
+                })
+                .orElseThrow(() -> new NotFoundException(JOB_NOT_FOUND));
+    }
+
+    @Override
+    public JobScheduleEntity findByJobName(String jobName) {
+        return crudRepository.findByJobName(jobName).orElseThrow(() -> new NotFoundException(JOB_NOT_FOUND));
     }
 }

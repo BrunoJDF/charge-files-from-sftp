@@ -1,10 +1,9 @@
 package pe.bruno.com.fileattachment.application.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
+
+@Data
 public class CreateJobScheduleDto {
     private String jobName;
 }

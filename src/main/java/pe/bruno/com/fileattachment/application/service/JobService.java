@@ -14,4 +14,8 @@ public interface JobService {
     List<JobScheduleDto> getAllJob();
 
     JobScheduleDto addJobParam(JobParamDto param, int id);
+
+    JobScheduleDto getJobByJobName(String jobName);
+
+    boolean deleteJobById(int id);
 }

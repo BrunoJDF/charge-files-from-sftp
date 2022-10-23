@@ -9,7 +9,7 @@ import pe.bruno.com.fileattachment.application.service.impl.FileServiceImpl;
 
 @Slf4j
 @AllArgsConstructor
-public class FileJob implements Job {
+public class FileJobProcess implements Job {
 
     private final FileServiceImpl service;
 

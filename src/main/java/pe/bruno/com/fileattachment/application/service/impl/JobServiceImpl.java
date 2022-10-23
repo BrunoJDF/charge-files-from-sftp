@@ -56,5 +56,15 @@ public class JobServiceImpl implements JobService {
         return this.mapperFacade.map(result, JobScheduleDto.class);
     }
 
+    @Override
+    public JobScheduleDto getJobByJobName(String jobName) {
+        return this.mapperFacade.map(this.repository.findByJobName(jobName), JobScheduleDto.class);
+    }
+
+    @Override
+    public boolean deleteJobById(int id) {
+        return this.repository.delete(id);
+    }
+
 
 }

@@ -10,4 +10,6 @@ public interface JobScheduleRepository {
     List<JobScheduleEntity> findAll();
     JobScheduleEntity findById(int id);
     boolean delete(int id);
+
+    JobScheduleEntity findByJobName(String jobName);
 }

@@ -1,11 +1,9 @@
 package pe.bruno.com.fileattachment.application.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
+@Data
 public class JobParamDto {
     private int id;
     private String paramName;
