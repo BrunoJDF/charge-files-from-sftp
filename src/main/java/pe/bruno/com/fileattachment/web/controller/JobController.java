@@ -28,4 +28,7 @@ public interface JobController {
 
     @GetMapping("/find/name")
     ResponseEntity<JobScheduleDto> getJobByJobName(@RequestParam("jobName") String jobName);
+
+    @GetMapping("/{id}/find/job_params")
+    List<JobParamDto> getJobParamByJobScheduleId(@PathVariable("id") String jobId);
 }

@@ -22,7 +22,7 @@ public class JobScheduleEntity {
     @Column
     private String jobName;
 
-    @OneToMany(mappedBy = "jobSchedule", orphanRemoval = true)
+    @OneToMany(mappedBy = "jobSchedule", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @ToString.Exclude
     private List<JobParamEntity> params = new ArrayList<>();
 

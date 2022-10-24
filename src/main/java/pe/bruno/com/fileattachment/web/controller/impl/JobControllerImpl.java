@@ -39,6 +39,7 @@ public class JobControllerImpl implements JobController {
         return ResponseEntity.ok(service.deleteJobById(Integer.parseInt(id)));
     }
 
+    @Override
     public ResponseEntity<JobScheduleDto> addJobParam(JobParamDto param, String id) {
         return ResponseEntity.ok(service.addJobParam(param, Integer.parseInt(id)));
     }
@@ -46,5 +47,10 @@ public class JobControllerImpl implements JobController {
     @Override
     public ResponseEntity<JobScheduleDto> getJobByJobName(String jobName) {
         return ResponseEntity.ok(service.getJobByJobName(jobName));
+    }
+
+    @Override
+    public List<JobParamDto> getJobParamByJobScheduleId(String jobId) {
+        return service.getAllJobParamByJobScheduleId(Integer.parseInt(jobId));
     }
 }

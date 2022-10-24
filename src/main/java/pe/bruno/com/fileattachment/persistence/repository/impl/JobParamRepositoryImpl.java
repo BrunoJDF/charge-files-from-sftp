@@ -19,8 +19,8 @@ public class JobParamRepositoryImpl implements JobParamRepository {
     }
 
     @Override
-    public List<JobParamEntity> findAll() {
-        return null;
+    public List<JobParamEntity> findAllByJobScheduleId(int jobId) {
+        return this.crudRepository.findAllByJobScheduleId(jobId);
     }
 
     @Override

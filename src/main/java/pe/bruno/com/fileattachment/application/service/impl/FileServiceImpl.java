@@ -73,4 +73,30 @@ public class FileServiceImpl implements FileService {
             log.error("error getAllFilesAction");
         }
     }
+
+    @Override
+    public void downloadFile(String remoteFilePath, String localFilePath) {
+        ChannelSftp channelSftp = configuration.createChannelSftp();
+        try {
+            OutputStream outputStream;
+            /** File file = new File(localFilePath + "entry.getFilename()"); - Pendiente corregir **/
+            File file = new File(localFilePath);
+            outputStream = new FileOutputStream(file);
+            /** Pendiente Corregir
+             * channelSftp.get(remoteFilePath + "entry.getFilename()", outputStream);
+             * channelSftp.rm(remoteFilePath + "entry.getFilename()");
+             **/
+            channelSftp.get(remoteFilePath, outputStream);
+            channelSftp.rm(remoteFilePath);
+            if (file.createNewFile()) {
+                log.info("file was created");
+            } else {
+                log.info("file was overwritten");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            configuration.disconnectChannelSftp(channelSftp);
+        }
+    }
 }

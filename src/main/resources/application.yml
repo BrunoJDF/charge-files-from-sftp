@@ -12,6 +12,11 @@ spring:
   quartz:
     job-store-type: memory
 config:
+  job:
+    name: config-job
+    param:
+      local-path: local-path
+      remote-path: remote-path
   sftp:
     host: ${SFTP_HOST:localhost}
     port: ${SFTP_PORT:2222}

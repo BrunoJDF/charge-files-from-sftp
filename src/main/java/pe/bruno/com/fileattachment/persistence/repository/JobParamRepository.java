@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface JobParamRepository {
     JobParamEntity save(JobParamEntity toSave);
-    List<JobParamEntity> findAll();
+    List<JobParamEntity> findAllByJobScheduleId(int jobId);
     JobParamEntity findById(int id);
     boolean delete(int id);
 }

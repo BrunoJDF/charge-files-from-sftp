@@ -57,6 +57,11 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
+    public List<JobParamDto> getAllJobParamByJobScheduleId(int jobId) {
+        return this.mapperFacade.mapAsList(jobParamRepository.findAllByJobScheduleId(jobId), JobParamDto.class);
+    }
+
+    @Override
     public JobScheduleDto getJobByJobName(String jobName) {
         return this.mapperFacade.map(this.repository.findByJobName(jobName), JobScheduleDto.class);
     }
