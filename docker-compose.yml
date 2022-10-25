@@ -11,3 +11,10 @@ services:
       - '5432:5432'
     volumes:
       - ./postgres_data:/var/lib/postgresql/data
+  sftp:
+    image: atmoz/sftp
+    volumes:
+      - C:/Users/brunj/sfpt_in:/home/foo/upload
+    ports:
+      - "2222:22"
+    command: foo:pass:1001

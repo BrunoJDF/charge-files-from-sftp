@@ -3,23 +3,25 @@ package pe.bruno.com.fileattachment.config;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.JobDetail;
-import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
 import org.quartz.spi.TriggerFiredBundle;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.quartz.CronTriggerFactoryBean;
 import org.springframework.scheduling.quartz.JobDetailFactoryBean;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
-import org.springframework.scheduling.quartz.SimpleTriggerFactoryBean;
 import org.springframework.scheduling.quartz.SpringBeanJobFactory;
 import pe.bruno.com.fileattachment.application.job.FileJobProcess;
+
+import java.util.Calendar;
 
 @Slf4j
 @Configuration
 @AllArgsConstructor
 public class JobConfiguration {
-
+    private static final String CRON_EXPRESSION = "0 0/1 * 1/1 * ? *";
     private final ApplicationContext applicationContext;
 
     @Bean
@@ -37,7 +39,7 @@ public class JobConfiguration {
     }
 
     @Bean
-    public SchedulerFactoryBean createSchedulerFactory(SpringBeanJobFactory springBeanJobFactory, Trigger trigger) {
+    public SchedulerFactoryBean createSchedulerFactory(SpringBeanJobFactory springBeanJobFactory, Trigger... trigger) {
         var schedulerFactory = new SchedulerFactoryBean();
         schedulerFactory.setAutoStartup(true);
         schedulerFactory.setWaitForJobsToCompleteOnShutdown(true);
@@ -48,8 +50,8 @@ public class JobConfiguration {
         return schedulerFactory;
     }
 
-    @Bean
-    public JobDetailFactoryBean jobDetail() {
+    @Bean(name = "file")
+    public JobDetailFactoryBean fileJobDetail() {
         JobDetailFactoryBean factoryBean = new JobDetailFactoryBean();
         factoryBean.setJobClass(FileJobProcess.class);
         factoryBean.setDescription("Running JobDownloadFromSFTP...");
@@ -57,13 +59,13 @@ public class JobConfiguration {
         return factoryBean;
     }
 
-    @Bean
-    public SimpleTriggerFactoryBean trigger(JobDetail job) {
-        SimpleTriggerFactoryBean trigger = new SimpleTriggerFactoryBean();
+    @Bean(name = "fileTrigger")
+    public CronTriggerFactoryBean fileTrigger(@Qualifier("file") JobDetail job) {
+        CronTriggerFactoryBean trigger = new CronTriggerFactoryBean();
         trigger.setJobDetail(job);
-        trigger.setRepeatInterval(10000);
-        trigger.setStartDelay(3000);
-        trigger.setRepeatCount(SimpleTrigger.REPEAT_INDEFINITELY);
+        trigger.setStartTime(Calendar.getInstance().getTime());
+        trigger.setCronExpression(CRON_EXPRESSION);
+        trigger.setName("fileTrigger");
         return trigger;
     }
 

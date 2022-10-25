@@ -3,12 +3,18 @@ package pe.bruno.com.fileattachment.application.service.impl;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.ChannelSftp.LsEntry;
 import com.jcraft.jsch.SftpException;
+import io.vavr.control.Try;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import ma.glasnost.orika.MapperFacade;
 import org.springframework.stereotype.Service;
-import pe.bruno.com.fileattachment.application.dto.FileResponseDto;
+import pe.bruno.com.fileattachment.application.commons.FileStatus;
+import pe.bruno.com.fileattachment.application.dto.FileDto;
+import pe.bruno.com.fileattachment.application.dto.FolderDto;
 import pe.bruno.com.fileattachment.application.service.FileService;
 import pe.bruno.com.fileattachment.config.SftpConfiguration;
+import pe.bruno.com.fileattachment.persistence.model.FileEntity;
+import pe.bruno.com.fileattachment.persistence.repository.FileRepository;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -21,9 +27,11 @@ import java.util.Vector;
 @Slf4j
 public class FileServiceImpl implements FileService {
     private final SftpConfiguration configuration;
+    private final FileRepository fileRepository;
+    private final MapperFacade mapperFacade;
 
     @Override
-    public FileResponseDto downloadFile(String remoteFilePath) {
+    public FolderDto downloadFile(String remoteFilePath) {
         ChannelSftp channelSftp = configuration.createChannelSftp();
         try {
             Vector<?> fileList = channelSftp.ls(remoteFilePath);
@@ -32,7 +40,7 @@ public class FileServiceImpl implements FileService {
                     getAllFilesAction(o, channelSftp, remoteFilePath);
                 });
             }
-            return FileResponseDto.builder()
+            return FolderDto.builder()
                     .message("Success")
                     .folderFilesSize(fileList.size())
                     .path(configuration.getLocalPath())
@@ -44,7 +52,7 @@ public class FileServiceImpl implements FileService {
             configuration.disconnectChannelSftp(channelSftp);
         }
 
-        return FileResponseDto.builder()
+        return FolderDto.builder()
                 .message("Error")
                 .build();
     }
@@ -75,8 +83,9 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public void downloadFile(String remoteFilePath, String localFilePath) {
+    public FileDto downloadFile(String remoteFilePath, String localFilePath) {
         ChannelSftp channelSftp = configuration.createChannelSftp();
+        FileDto dto;
         try {
             OutputStream outputStream;
             /** File file = new File(localFilePath + "entry.getFilename()"); - Pendiente corregir **/
@@ -93,10 +102,37 @@ public class FileServiceImpl implements FileService {
             } else {
                 log.info("file was overwritten");
             }
+            dto = FileDto.builder()
+                    .filename(file.getName())
+                    .send(false)
+                    .response(FileStatus.SAVED)
+                    .path(localFilePath)
+                    .build();
+
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("error download file", e);
+            dto = FileDto.builder()
+                    .response(FileStatus.WITH_ERRORS)
+                    .filename(null)
+                    .path(null)
+                    .send(false)
+                    .build();
         } finally {
             configuration.disconnectChannelSftp(channelSftp);
         }
+        return this.save(dto);
+    }
+
+    @Override
+    public FileDto save(FileDto create) {
+        var toSave = this.mapperFacade.map(create, FileEntity.class);
+        return Try.of(() -> this.fileRepository.save(toSave))
+                .map(saved -> this.mapperFacade.map(saved, FileDto.class))
+                .get();
+    }
+
+    @Override
+    public FileDto update(FileDto update, String id) {
+        return null;
     }
 }

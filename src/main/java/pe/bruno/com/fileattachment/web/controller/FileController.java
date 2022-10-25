@@ -3,12 +3,12 @@ package pe.bruno.com.fileattachment.web.controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import pe.bruno.com.fileattachment.application.dto.FileResponseDto;
+import pe.bruno.com.fileattachment.application.dto.FolderDto;
 
 @RequestMapping("/sftp")
 public interface FileController {
 
     @GetMapping("/download")
-    FileResponseDto downloadFileFromSftp(@RequestParam String path);
+    FolderDto downloadFileFromSftp(@RequestParam String path);
 
 }

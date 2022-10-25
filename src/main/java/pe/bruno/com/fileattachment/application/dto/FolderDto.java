@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class FileResponseDto {
+public class FolderDto {
     private String path;
     private int folderFilesSize;
     private String message;
