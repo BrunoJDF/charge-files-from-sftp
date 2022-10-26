@@ -4,7 +4,7 @@ spring:
   application:
     name: file-attachment
   datasource:
-    url: jdbc:postgresql://localhost:5432/jobDb
+    url: jdbc:postgresql://${HOST_DB}:5432/jobDb
     username: ${USER_DB:root}
     password: ${PWD_DB:root}
   jpa:
@@ -23,6 +23,6 @@ config:
     user: ${SFTP_USER:foo}
     password: ${SFTP_PWD:pass}
   path:
-    local-path: D:/file/upload/
-    remote-path: /upload/
-    temp-path: /manage_file/upload/temp/
+    local-path: ${FOLDER_LOCAL:D:/file/upload/}
+    remote-path: ${FOLDER_REMOTE:/manage_file/upload/}
+    temp-path: ${FOLDER_TEMP:/manage_file/upload/temp/}

@@ -1,7 +1,7 @@
-version: '3.3'
+version: '3.9'
 
 services:
-  job-db:
+  jobDb:
     image: postgres:13
     environment:
       - POSTGRES_DB=jobDb
@@ -11,6 +11,8 @@ services:
       - '5432:5432'
     volumes:
       - ./postgres_data:/var/lib/postgresql/data
+    networks:
+      - file-ecosystem
   sftp:
     image: atmoz/sftp
     volumes:
@@ -19,3 +21,17 @@ services:
     ports:
       - "2222:22"
     command: foo:pass:1001
+    networks:
+      - file-ecosystem
+  attachment-app:
+    container_name: attachment-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:9090"
+    networks:
+      - file-ecosystem
+networks:
+  file-ecosystem:
+    name: file-ecosystem
