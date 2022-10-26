@@ -25,3 +25,4 @@ config:
   path:
     local-path: D:/file/upload/
     remote-path: /upload/
+    temp-path: /manage_file/upload/temp/

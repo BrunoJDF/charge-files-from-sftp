@@ -1,4 +1,4 @@
-package pe.bruno.com.fileattachment.application.dto;
+package pe.bruno.com.fileattachment.application.dto.file;
 
 import lombok.Builder;
 import lombok.Data;

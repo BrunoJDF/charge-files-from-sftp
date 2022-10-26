@@ -14,7 +14,8 @@ services:
   sftp:
     image: atmoz/sftp
     volumes:
-      - C:/Users/brunj/sfpt_in:/home/foo/upload
+      - C:/Users/brunj/manage_file/upload:/home/foo/manage_file/upload
+      - C:/Users/brunj/manage_file/uploaded:/home/foo/manage_file/uploaded
     ports:
       - "2222:22"
     command: foo:pass:1001

@@ -4,13 +4,13 @@ import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.ChannelSftp.LsEntry;
 import com.jcraft.jsch.SftpException;
 import io.vavr.control.Try;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
 import org.springframework.stereotype.Service;
 import pe.bruno.com.fileattachment.application.commons.FileStatus;
-import pe.bruno.com.fileattachment.application.dto.FileDto;
-import pe.bruno.com.fileattachment.application.dto.FolderDto;
+import pe.bruno.com.fileattachment.application.dto.file.FileDto;
+import pe.bruno.com.fileattachment.application.dto.file.FolderDto;
 import pe.bruno.com.fileattachment.application.service.FileService;
 import pe.bruno.com.fileattachment.config.SftpConfiguration;
 import pe.bruno.com.fileattachment.persistence.model.FileEntity;
@@ -23,80 +23,92 @@ import java.io.OutputStream;
 import java.util.Vector;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Slf4j
 public class FileServiceImpl implements FileService {
+
+    private static final String FILE_EXTENSION = ".csv";
+    private static final String FOLDER_TEMP = "temp";
+    private static final String FILE_WAS_CREATED = "File was created";
+    private static final String FILE_WAS_OVERWRITTEN = "File was overwritten";
     private final SftpConfiguration configuration;
     private final FileRepository fileRepository;
     private final MapperFacade mapperFacade;
+    private ChannelSftp channelSftp;
 
     @Override
-    public FolderDto downloadFile(String remoteFilePath) {
-        ChannelSftp channelSftp = configuration.createChannelSftp();
-        try {
-            Vector<?> fileList = channelSftp.ls(remoteFilePath);
-            if (fileList.size() > 0) {
-                fileList.forEach(o -> {
-                    getAllFilesAction(o, channelSftp, remoteFilePath);
-                });
-            }
-            return FolderDto.builder()
-                    .message("Success")
-                    .folderFilesSize(fileList.size())
-                    .path(configuration.getLocalPath())
-                    .build();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            log.error("Error download file", ex);
-        } finally {
-            configuration.disconnectChannelSftp(channelSftp);
-        }
-
+    public FolderDto downloadAction(String remoteFilePath) {
+        var fileSize = getFolderAction(remoteFilePath, configuration.getLocalPath());
         return FolderDto.builder()
-                .message("Error")
+                .message("Success")
+                .folderFilesSize(fileSize)
+                .path(configuration.getLocalPath())
                 .build();
     }
 
     @Override
-    public void getAllFilesAction(Object o, ChannelSftp channelSftp, String remoteFilePath) {
-        OutputStream outputStream;
+    public int getFolderAction(String remoteFilePath, String localFilePath) {
+        channelSftp = configuration.createChannelSftp();
+        Vector<?> fileList = new Vector<>();
         try {
-            if (o instanceof LsEntry) {
-                LsEntry entry = (LsEntry) o;
-                if (!entry.getFilename().equals(".") && !entry.getFilename().equals("..")) {
-                    log.info(entry.getFilename());
-                    File file = new File(configuration.getLocalPath() + entry.getFilename());
-                    outputStream = new FileOutputStream(file);
-                    channelSftp.get(remoteFilePath + entry.getFilename(), outputStream);
-                    channelSftp.rm(remoteFilePath + entry.getFilename());
-                    if (file.createNewFile()) {
-                        log.info("file was created");
-                    } else {
-                        log.info("file was overwritten");
-                    }
+            fileList = channelSftp.ls(remoteFilePath);
+            if (fileList.size() > 0) {
+                for (Object o :
+                        fileList) {
+                    getAllFilesAction(o, remoteFilePath, localFilePath);
                 }
             }
         } catch (SftpException | IOException ex) {
             ex.printStackTrace();
-            log.error("error getAllFilesAction");
+            log.error("error getFolderAction", ex);
+        } finally {
+            configuration.disconnectChannelSftp(channelSftp);
+        }
+        return fileList.size();
+    }
+
+    @Override
+    public void getAllFilesAction(Object o, String remoteFilePath, String localFilePath) throws SftpException, IOException {
+        OutputStream outputStream;
+        if (o instanceof LsEntry) {
+            LsEntry entry = (LsEntry) o;
+            if (!entry.getFilename().equals(".") && !entry.getFilename().equals("..") && !entry.getFilename().equals(FOLDER_TEMP)) {
+
+                File file = createFileCSV(new File(localFilePath + entry.getFilename()));
+                outputStream = new FileOutputStream(file);
+
+                channelSftp.get(remoteFilePath + entry.getFilename(), outputStream);
+                try {
+                    channelSftp.rename(remoteFilePath + entry.getFilename(), configuration.getTempPath() + entry.getFilename());
+                } catch (SftpException e) {
+                    channelSftp.mkdir(configuration.getTempPath());
+                    channelSftp.rename(remoteFilePath + entry.getFilename(), configuration.getTempPath() + entry.getFilename());
+                }
+                var isCreated = file.createNewFile();
+                if (isCreated) {
+                    log.info(FILE_WAS_CREATED);
+                } else {
+                    log.info(FILE_WAS_OVERWRITTEN);
+                }
+            }
         }
     }
 
     @Override
-    public FileDto downloadFile(String remoteFilePath, String localFilePath) {
+    public FileDto downloadAction(String remoteFilePath, String localFilePath) {
         ChannelSftp channelSftp = configuration.createChannelSftp();
         FileDto dto;
         try {
             OutputStream outputStream;
             /** File file = new File(localFilePath + "entry.getFilename()"); - Pendiente corregir **/
-            File file = new File(localFilePath);
+            File file = createFileCSV(new File(localFilePath));
             outputStream = new FileOutputStream(file);
             /** Pendiente Corregir
              * channelSftp.get(remoteFilePath + "entry.getFilename()", outputStream);
              * channelSftp.rm(remoteFilePath + "entry.getFilename()");
              **/
             channelSftp.get(remoteFilePath, outputStream);
-            channelSftp.rm(remoteFilePath);
+            //channelSftp.rm(remoteFilePath);
             if (file.createNewFile()) {
                 log.info("file was created");
             } else {
@@ -121,6 +133,12 @@ public class FileServiceImpl implements FileService {
             configuration.disconnectChannelSftp(channelSftp);
         }
         return this.save(dto);
+    }
+
+    private File createFileCSV(File localFile) {
+        var index = localFile.getName().lastIndexOf(".");
+        var name = localFile.getName().substring(0, index);
+        return new File(localFile.getParent(), name + FILE_EXTENSION);
     }
 
     @Override

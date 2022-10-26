@@ -1,15 +1,19 @@
 package pe.bruno.com.fileattachment.application.service;
 
-import com.jcraft.jsch.ChannelSftp;
-import pe.bruno.com.fileattachment.application.dto.FileDto;
-import pe.bruno.com.fileattachment.application.dto.FolderDto;
+import com.jcraft.jsch.SftpException;
+import pe.bruno.com.fileattachment.application.dto.file.FileDto;
+import pe.bruno.com.fileattachment.application.dto.file.FolderDto;
+
+import java.io.IOException;
 
 public interface FileService {
-    FolderDto downloadFile(String remoteFilePath);
+    FolderDto downloadAction(String remoteFilePath);
 
-    void getAllFilesAction(Object o, ChannelSftp channelSftp, String remoteFilePath);
+    void getAllFilesAction(Object o, String remoteFilePath, String localFilePath) throws SftpException, IOException;
 
-    FileDto downloadFile(String remoteFilePath, String localFilePath);
+    int getFolderAction(String remoteFilePath, String localFilePath);
+
+    FileDto downloadAction(String remoteFilePath, String localFilePath);
 
     FileDto save(FileDto create);
 

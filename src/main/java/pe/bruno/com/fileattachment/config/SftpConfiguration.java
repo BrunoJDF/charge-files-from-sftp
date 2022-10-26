@@ -22,6 +22,8 @@ public class SftpConfiguration {
     private String password;
     @Value("${config.path.local-path}")
     private String localPath;
+    @Value("${config.path.temp-path}")
+    private String tempPath;
     @Value("${config.path.remote-path}")
     private String remotePath;
     @Value("${config.job.name}")

@@ -4,7 +4,7 @@ import ma.glasnost.orika.CustomMapper;
 import ma.glasnost.orika.MappingContext;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
 import org.springframework.context.annotation.Configuration;
-import pe.bruno.com.fileattachment.application.dto.JobScheduleDto;
+import pe.bruno.com.fileattachment.application.dto.job.JobScheduleDto;
 import pe.bruno.com.fileattachment.persistence.model.JobScheduleEntity;
 
 @Configuration

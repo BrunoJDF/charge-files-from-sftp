@@ -4,9 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
-import pe.bruno.com.fileattachment.application.dto.CreateJobScheduleDto;
-import pe.bruno.com.fileattachment.application.dto.JobParamDto;
-import pe.bruno.com.fileattachment.application.dto.JobScheduleDto;
+import pe.bruno.com.fileattachment.application.dto.job.CreateJobScheduleDto;
+import pe.bruno.com.fileattachment.application.dto.job.JobParamDto;
+import pe.bruno.com.fileattachment.application.dto.job.JobScheduleDto;
 import pe.bruno.com.fileattachment.application.service.JobService;
 import pe.bruno.com.fileattachment.web.controller.JobController;
 

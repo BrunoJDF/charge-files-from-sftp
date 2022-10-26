@@ -2,9 +2,9 @@ package pe.bruno.com.fileattachment.web.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pe.bruno.com.fileattachment.application.dto.CreateJobScheduleDto;
-import pe.bruno.com.fileattachment.application.dto.JobParamDto;
-import pe.bruno.com.fileattachment.application.dto.JobScheduleDto;
+import pe.bruno.com.fileattachment.application.dto.job.CreateJobScheduleDto;
+import pe.bruno.com.fileattachment.application.dto.job.JobParamDto;
+import pe.bruno.com.fileattachment.application.dto.job.JobScheduleDto;
 
 import java.util.List;
 

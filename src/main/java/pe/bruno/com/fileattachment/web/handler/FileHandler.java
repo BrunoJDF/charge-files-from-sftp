@@ -17,8 +17,9 @@ public class FileHandler {
 
     @ExceptionHandler
     public ResponseEntity<ApiResponseError> exceptionHandler(Exception ex) {
-        responseError = constructResponse(HttpStatus.NOT_FOUND.value(), ex);
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseError);
+        responseError = constructResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex);
+        log.error("exception handler", ex);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseError);
     }
 
     @ExceptionHandler

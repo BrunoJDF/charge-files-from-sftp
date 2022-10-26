@@ -1,8 +1,8 @@
 package pe.bruno.com.fileattachment.application.service;
 
-import pe.bruno.com.fileattachment.application.dto.CreateJobScheduleDto;
-import pe.bruno.com.fileattachment.application.dto.JobParamDto;
-import pe.bruno.com.fileattachment.application.dto.JobScheduleDto;
+import pe.bruno.com.fileattachment.application.dto.job.CreateJobScheduleDto;
+import pe.bruno.com.fileattachment.application.dto.job.JobParamDto;
+import pe.bruno.com.fileattachment.application.dto.job.JobScheduleDto;
 
 import java.util.List;
 
