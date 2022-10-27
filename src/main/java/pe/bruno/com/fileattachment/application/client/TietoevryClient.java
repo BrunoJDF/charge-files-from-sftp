@@ -1,12 +1,11 @@
 package pe.bruno.com.fileattachment.application.client;
 
-import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import pe.bruno.com.fileattachment.application.dto.tieto.TokenDto;
 
-@FeignClient(value = "Tieto", url = "https://10.47.156.162")
+//@FeignClient(value = "Tieto", url = "https://10.47.156.162")
 public interface TietoevryClient {
 
     @PostMapping("/token")

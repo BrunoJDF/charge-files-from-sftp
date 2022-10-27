@@ -6,16 +6,13 @@ import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import pe.bruno.com.fileattachment.application.client.PokemonClient;
-import pe.bruno.com.fileattachment.application.client.TietoevryClient;
 import pe.bruno.com.fileattachment.application.dto.file.FileDto;
 import pe.bruno.com.fileattachment.application.dto.tieto.PokemonDto;
-import pe.bruno.com.fileattachment.application.dto.tieto.TokenDto;
 
 @Slf4j
 @RequiredArgsConstructor
 public class FileJobProcess implements Job {
     private final PokemonClient pokemonClient;
-    private final TietoevryClient tietoevryClient;
 
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
@@ -25,8 +22,6 @@ public class FileJobProcess implements Job {
     }
 
     private void generateToken(FileDto savedFile) {
-
-        TokenDto response = tietoevryClient.getToken("eiradmin", "eiradmin");
-        log.info("generando token {}", response);
+        log.info("generando token ");
     }
 }

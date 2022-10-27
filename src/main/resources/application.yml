@@ -3,12 +3,6 @@ server:
 spring:
   application:
     name: file-attachment
-  datasource:
-    url: jdbc:postgresql://${HOST_DB}:5432/jobDb
-    username: ${USER_DB:root}
-    password: ${PWD_DB:root}
-  jpa:
-    show-sql: true
   quartz:
     job-store-type: memory
 config:
