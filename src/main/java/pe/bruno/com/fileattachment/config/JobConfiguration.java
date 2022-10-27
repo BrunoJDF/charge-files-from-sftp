@@ -2,6 +2,7 @@ package pe.bruno.com.fileattachment.config;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.var;
 import org.quartz.JobDetail;
 import org.quartz.Trigger;
 import org.quartz.spi.TriggerFiredBundle;

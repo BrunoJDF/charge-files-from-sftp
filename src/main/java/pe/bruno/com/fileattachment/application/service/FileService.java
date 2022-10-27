@@ -13,8 +13,6 @@ public interface FileService {
 
     int getFolderAction(String remoteFilePath, String localFilePath);
 
-    FileDto downloadAction(String remoteFilePath, String localFilePath);
-
     FileDto save(FileDto create);
 
     FileDto update(FileDto update, String id);

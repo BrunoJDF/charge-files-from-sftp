@@ -1,6 +1,7 @@
 package pe.bruno.com.fileattachment.config;
 
 import lombok.AllArgsConstructor;
+import lombok.var;
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
