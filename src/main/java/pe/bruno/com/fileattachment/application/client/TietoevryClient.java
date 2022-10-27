@@ -1,13 +1,17 @@
 package pe.bruno.com.fileattachment.application.client;
 
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import pe.bruno.com.fileattachment.application.dto.tieto.PokemonDto;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import pe.bruno.com.fileattachment.application.dto.tieto.TokenDto;
 
-@FeignClient(value = "pokeapi", url = "https://pokeapi.co/api/v2")
+@FeignClient(value = "Tieto", url = "https://10.47.156.162")
 public interface TietoevryClient {
-    @GetMapping("/pokemon/{idOrName}")
-    PokemonDto getPokemon(@PathVariable String idOrName);
 
+    @PostMapping("/token")
+    TokenDto getToken(@RequestParam String user, @RequestParam String passwd);
+
+    @PutMapping("/api/v2/configuration/feature/eir/equipments/provisioning")
+    String sendFile(@RequestParam String filePath);
 }

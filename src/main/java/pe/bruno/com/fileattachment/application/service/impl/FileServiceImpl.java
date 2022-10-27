@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
 import org.springframework.stereotype.Service;
 import pe.bruno.com.fileattachment.application.commons.FileStatus;
+import pe.bruno.com.fileattachment.application.commons.ProcessStatus;
 import pe.bruno.com.fileattachment.application.dto.file.FileDto;
 import pe.bruno.com.fileattachment.application.dto.file.FolderDto;
 import pe.bruno.com.fileattachment.application.service.FileService;
@@ -40,7 +41,7 @@ public class FileServiceImpl implements FileService {
     public FolderDto downloadAction(String remoteFilePath) {
         var fileSize = getFolderAction(remoteFilePath, configuration.getLocalPath());
         return FolderDto.builder()
-                .message("Success")
+                .message(ProcessStatus.SUCCESS.name())
                 .folderFilesSize(fileSize)
                 .path(configuration.getLocalPath())
                 .build();
@@ -59,7 +60,6 @@ public class FileServiceImpl implements FileService {
                 }
             }
         } catch (SftpException | IOException ex) {
-            ex.printStackTrace();
             log.error("error getFolderAction", ex);
         } finally {
             configuration.disconnectChannelSftp(channelSftp);
