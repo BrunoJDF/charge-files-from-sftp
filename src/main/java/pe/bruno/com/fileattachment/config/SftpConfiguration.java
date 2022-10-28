@@ -26,12 +26,6 @@ public class SftpConfiguration {
     private String tempPath;
     @Value("${config.path.remote-path}")
     private String remotePath;
-    @Value("${config.job.name}")
-    private String jobName;
-    @Value("${config.job.param.local-path}")
-    private String paramLocalPath;
-    @Value("${config.job.param.remote-path}")
-    private String paramRemotePath;
 
     public ChannelSftp createChannelSftp() {
         JSch config = new JSch();

@@ -60,6 +60,7 @@ public class FileServiceImpl implements FileService {
         } finally {
             configuration.disconnectChannelSftp(channelSftp);
         }
+        log.info("fileList: " + fileList.size());
         return fileList.size();
     }
 
@@ -75,8 +76,10 @@ public class FileServiceImpl implements FileService {
 
                 channelSftp.get(remoteFilePath + entry.getFilename(), outputStream);
                 try {
+                    log.info("try");
                     channelSftp.rename(remoteFilePath + entry.getFilename(), configuration.getTempPath() + entry.getFilename());
                 } catch (SftpException e) {
+                    log.info("catch");
                     channelSftp.mkdir(configuration.getTempPath());
                     channelSftp.rename(remoteFilePath + entry.getFilename(), configuration.getTempPath() + entry.getFilename());
                 }

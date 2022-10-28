@@ -1,12 +1,13 @@
 package pe.bruno.com.fileattachment.config;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.var;
 import org.quartz.JobDetail;
 import org.quartz.Trigger;
 import org.quartz.spi.TriggerFiredBundle;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,9 +21,10 @@ import java.util.Calendar;
 
 @Slf4j
 @Configuration
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class JobConfiguration {
-    private static final String CRON_EXPRESSION = "0 0/1 * 1/1 * ? *";
+    @Value("${config.job.cron-expression}")
+    private String cronExpression;
     private final ApplicationContext applicationContext;
 
     @Bean
@@ -62,10 +64,11 @@ public class JobConfiguration {
 
     @Bean(name = "fileTrigger")
     public CronTriggerFactoryBean fileTrigger(@Qualifier("file") JobDetail job) {
+        log.info("cron expresion: " + cronExpression);
         CronTriggerFactoryBean trigger = new CronTriggerFactoryBean();
         trigger.setJobDetail(job);
         trigger.setStartTime(Calendar.getInstance().getTime());
-        trigger.setCronExpression(CRON_EXPRESSION);
+        trigger.setCronExpression(cronExpression);
         trigger.setName("fileTrigger");
         return trigger;
     }

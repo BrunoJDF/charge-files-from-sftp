@@ -5,12 +5,13 @@ spring:
     name: file-attachment
   quartz:
     job-store-type: memory
+api:
+  tietoevry:
+    user: ${TIETO_USER:eiradmin}
+    password: ${TIETO_PWD:RWl8xxjPYCMMoZPR4HX9}
 config:
   job:
-    name: config-job
-    param:
-      local-path: local-path
-      remote-path: remote-path
+    cron-expression: ${CRON_SCHEDULE:0 0/1 * 1/1 * ? *}
   sftp:
     host: ${SFTP_HOST:localhost}
     port: ${SFTP_PORT:2222}
