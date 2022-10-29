@@ -15,9 +15,12 @@ import pe.bruno.com.fileattachment.application.service.FileService;
 import pe.bruno.com.fileattachment.config.SftpConfiguration;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 import java.util.Vector;
 
 @Service
@@ -72,7 +75,7 @@ public class FileServiceImpl implements FileService {
             if (!entry.getFilename().equals(".") && !entry.getFilename().equals("..") && !entry.getFilename().equals(FOLDER_TEMP)) {
 
                 File file = createFileCSV(new File(localFilePath + entry.getFilename()));
-                outputStream = new FileOutputStream(file);
+                outputStream = Files.newOutputStream(file.toPath());
 
                 channelSftp.get(remoteFilePath + entry.getFilename(), outputStream);
                 try {
@@ -109,5 +112,11 @@ public class FileServiceImpl implements FileService {
     public FileDto update(FileDto update, String id) {
         //TODO Implementacion para actualizar archivo
         return null;
+    }
+
+    @Override
+    public List<File> getFolderLocalAction(String localPath) {
+        File folder = new File(localPath);
+        return Arrays.asList(Objects.requireNonNull(folder.listFiles()));
     }
 }

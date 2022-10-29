@@ -10,10 +10,6 @@ ENV SFTP_HOST=sftp \
     TIETO_USER=eiradmin \
     TIETO_PWD=eiradmin \
     CRON_SCHEDULE="0 0/1 * 1/1 * ? *"
-    ##HOST_DB=jobDb \
-    ##USER_DB=root \
-    ##PWD_DB=root \
-    ##DB=jobDb \
 USER root
 RUN mkdir -p /data/file/upload/
 COPY target/fileAttachment-1.jar /fileAttachment-1.jar

@@ -4,7 +4,9 @@ import com.jcraft.jsch.SftpException;
 import pe.bruno.com.fileattachment.application.dto.file.FileDto;
 import pe.bruno.com.fileattachment.application.dto.file.FolderDto;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 public interface FileService {
     FolderDto downloadAction(String remoteFilePath);
@@ -16,4 +18,6 @@ public interface FileService {
     FileDto save(FileDto create);
 
     FileDto update(FileDto update, String id);
+
+    List<File> getFolderLocalAction(String localPath);
 }

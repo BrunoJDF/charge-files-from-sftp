@@ -5,48 +5,47 @@ import lombok.extern.slf4j.Slf4j;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
-import pe.bruno.com.fileattachment.application.dto.file.FileDto;
+import pe.bruno.com.fileattachment.application.client.tieto.TietoevryClient;
+import pe.bruno.com.fileattachment.application.client.tieto.TietoevryConfiguration;
 import pe.bruno.com.fileattachment.application.dto.tieto.TokenDto;
 import pe.bruno.com.fileattachment.application.service.FileService;
 import pe.bruno.com.fileattachment.application.service.TokenService;
 import pe.bruno.com.fileattachment.config.SftpConfiguration;
 
+import java.io.File;
+import java.util.List;
+
 @Slf4j
 @RequiredArgsConstructor
 public class FileJobProcess implements Job {
-    //private final TietoevryClient tietoevryClient;
-    //private final TietoevryConfiguration tietoevryConfiguration;
+    private final TietoevryClient tietoevryClient;
+    private final TietoevryConfiguration tietoevryConfiguration;
     private final FileService fileService;
     private final SftpConfiguration sftpConfiguration;
     private final TokenService<TokenDto> tokenService;
-    private TokenDto tokenDto;
 
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         log.info("ejecutando job");
         fileService.getFolderAction(sftpConfiguration.getRemotePath(), sftpConfiguration.getLocalPath());
-        invokeLoadFile(FileDto.builder().build());
+        List<File> files = fileService.getFolderLocalAction(sftpConfiguration.getLocalPath());
+        files.forEach(this::invokeLoadFile);
 
-        /*PokemonDto response = pokemonClient.getPokemon("35");
-        log.info("pokemon {}", response);*/
     }
 
-    private void invokeLoadFile(FileDto savedFile) {
-        //TokenDto response = tietoevryClient.getToken(tietoevryConfiguration.getTietoUser(), tietoevryConfiguration.getTietoPassword());
+    private void invokeLoadFile(File sendFile) {
 
         TokenDto response = generateToken();
         try {
-            log.info("usando token {}", response);
-
-            throw new Exception("El token expiro");
+            tietoevryClient.sendFile(response.getToken(), sendFile.getPath());
         } catch (Exception e) {
             log.error("error ", e);
             disableToken(response);
 
-            TokenDto tokenAgain = generateToken();
-            log.info("usando tokenAgain {}", tokenAgain);
+            response = generateToken();
+            tietoevryClient.sendFile(response.getToken(), sendFile.getPath());
         }
-
+        log.info("response token {}", response);
     }
 
     private void disableToken(TokenDto response) {
@@ -55,8 +54,7 @@ public class FileJobProcess implements Job {
     }
 
     private TokenDto generateToken() {
-        TokenDto response = new TokenDto();
-        response.setToken("1231231231231231");
+        TokenDto response = tietoevryClient.getToken(tietoevryConfiguration.getTietoUser(), tietoevryConfiguration.getTietoPassword());
         return tokenService.save(response);
     }
 }
