@@ -14,8 +14,9 @@ spring:
     database-platform: org.hibernate.dialect.H2Dialect
 api:
   tietoevry:
-    user: ${TIETO_USER:eiradmin}
-    password: ${TIETO_PWD:RWl8xxjPYCMMoZPR4HX9}
+    user: ${TIETO_USER:provadmin}
+    password: ${TIETO_PWD:Provision1234!}
+    uri: ${TIETO_URI:http://localhost:8080/api}
 config:
   job:
     cron-expression: ${CRON_SCHEDULE:0 0/1 * 1/1 * ? *}

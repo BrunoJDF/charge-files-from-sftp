@@ -9,6 +9,8 @@ import pe.bruno.com.fileattachment.web.exception.ApiResponseError;
 import pe.bruno.com.fileattachment.web.exception.BadRequestException;
 import pe.bruno.com.fileattachment.web.exception.NotFoundException;
 
+import javax.net.ssl.SSLException;
+
 @Slf4j
 @ControllerAdvice
 public class FileHandler {
@@ -33,6 +35,13 @@ public class FileHandler {
         responseError = constructResponse(HttpStatus.BAD_REQUEST.value(), ex);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseError);
     }
+
+    @ExceptionHandler
+    public ResponseEntity<ApiResponseError> handleSslException(SSLException ex) {
+        responseError = constructResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseError);
+    }
+
 
     private ApiResponseError constructResponse(int value, Exception ex) {
         return new ApiResponseError(value, ex.getMessage(), ex);

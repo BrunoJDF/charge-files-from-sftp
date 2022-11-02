@@ -9,7 +9,8 @@ ENV SFTP_HOST=sftp \
     PORT=9090 \
     TIETO_USER=eiradmin \
     TIETO_PWD=eiradmin \
-    CRON_SCHEDULE="0 0/1 * 1/1 * ? *"
+    CRON_SCHEDULE="0 0/1 * 1/1 * ? *" \
+    TIETO_URI="http://10.71.100.226"
 USER root
 RUN mkdir -p /data/file/upload/
 COPY target/fileAttachment-1.jar /fileAttachment-1.jar
