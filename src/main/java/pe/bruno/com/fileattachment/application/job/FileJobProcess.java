@@ -10,12 +10,12 @@ import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import pe.bruno.com.fileattachment.application.dto.tieto.TokenDto;
-import pe.bruno.com.fileattachment.application.dto.tieto.TokenResponse;
 import pe.bruno.com.fileattachment.application.service.FileService;
 import pe.bruno.com.fileattachment.application.service.TokenService;
 import pe.bruno.com.fileattachment.config.SftpConfiguration;
 import pe.bruno.com.fileattachment.config.TietoevryConfiguration;
 import pe.bruno.com.fileattachment.web.exception.BadRequestException;
+import pe.bruno.com.fileattachment.web.exception.NotFoundException;
 import pe.bruno.com.fileattachment.web.exception.TokenExpiredException;
 
 import java.io.File;
@@ -32,6 +32,7 @@ public class FileJobProcess implements Job {
     private final TietoevryConfiguration tietoevryConfiguration;
     private final WebClient webClient;
     private final static String FILE_EXTENSION = ".csv";
+    private long tokenId;
 
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
@@ -41,7 +42,7 @@ public class FileJobProcess implements Job {
 
         files.forEach(file -> {
             boolean check = notMarked(file);
-            if(check) {
+            if (check) {
                 log.info(file.getPath());
                 invokeLoadFile(file);
                 file.renameTo(createFileTXT(file));
@@ -54,7 +55,7 @@ public class FileJobProcess implements Job {
         try {
             int position = file.getName().lastIndexOf("_");
             String marked = file.getName().substring(0, position);
-            if(marked.equals("marked")) {
+            if ("marked".equalsIgnoreCase(marked)) {
                 response = false;
             }
         } catch (Exception e) {
@@ -64,18 +65,26 @@ public class FileJobProcess implements Job {
     }
 
     private void invokeLoadFile(File sendFile) {
+        TokenDto token;
+        if (tokenId == 0) {
+            token = generateToken();
 
-        TokenDto response = generateToken();
+        } else {
+            token = tokenService.findByIdAndActiveTrue(tokenId)
+                    .orElseThrow(() -> new NotFoundException("No existe token"));
+        }
+
         try {
-            //sendFile(response.getToken(), sendFile.getPath());
+            log.info("token {}", token);
+            sendFile(token.getToken(), sendFile.getPath());
         } catch (TokenExpiredException e) {
             log.error("error ", e);
-            disableToken(response);
+            disableToken(token);
 
-            response = generateToken();
-            //sendFile(response.getToken(), sendFile.getPath());
+            token = generateToken();
+            sendFile(token.getToken(), sendFile.getPath());
         }
-        log.info("response token {}", response);
+        log.info("response token {}", token);
     }
 
     private void sendFile(String token, String path) throws TokenExpiredException {
@@ -95,13 +104,13 @@ public class FileJobProcess implements Job {
     }
 
     private TokenDto generateToken() {
-        TokenResponse response = getToken(tietoevryConfiguration.getTietoUser(), tietoevryConfiguration.getTietoPasswd());
-        TokenDto toSave = new TokenDto();
-        toSave.setToken(response.getToken());
-        return tokenService.save(toSave);
+        TokenDto response = getToken(tietoevryConfiguration.getTietoUser(), tietoevryConfiguration.getTietoPasswd());
+        TokenDto saved = tokenService.save(response);
+        tokenId = saved.getId();
+        return saved;
     }
 
-    private TokenResponse getToken(String tietoUser, String tietoPasswd) {
+    private TokenDto getToken(String tietoUser, String tietoPasswd) {
         return webClient.post()
                 .uri("/token")
                 .header("Content-Type", MediaType.APPLICATION_FORM_URLENCODED_VALUE)
@@ -111,7 +120,7 @@ public class FileJobProcess implements Job {
                         .with("passwd", tietoPasswd)
                 )
                 .retrieve()
-                .bodyToMono(TokenResponse.class)
+                .bodyToMono(TokenDto.class)
                 .onErrorMap(throwable -> new BadRequestException(throwable.getMessage()))
                 .block();
     }

@@ -14,5 +14,5 @@ public class TokenEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String token;
-    private boolean active = true;
+    private boolean active;
 }

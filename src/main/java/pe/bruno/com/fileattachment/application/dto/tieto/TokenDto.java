@@ -6,5 +6,5 @@ import lombok.Data;
 public class TokenDto {
     private long id;
     private String token;
-    private boolean active;
+    private boolean active = true;
 }
