@@ -6,9 +6,11 @@ import lombok.var;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
+import pe.bruno.com.fileattachment.application.dto.tieto.TietoResponseError;
 import pe.bruno.com.fileattachment.application.dto.tieto.TokenDto;
 import pe.bruno.com.fileattachment.application.service.FileService;
 import pe.bruno.com.fileattachment.application.service.TokenService;
@@ -20,8 +22,6 @@ import pe.bruno.com.fileattachment.web.exception.TokenExpiredException;
 
 import java.io.File;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -33,6 +33,7 @@ public class FileJobProcess implements Job {
     private final WebClient webClient;
     private final static String FILE_EXTENSION = ".csv";
     private long tokenId;
+    private boolean isSend;
 
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
@@ -43,9 +44,11 @@ public class FileJobProcess implements Job {
         files.forEach(file -> {
             boolean check = notMarked(file);
             if (check) {
-                log.info(file.getPath());
+                log.info("Se envia archivo " + file.getPath());
                 invokeLoadFile(file);
-                file.renameTo(createFileTXT(file));
+                if (isSend) {
+                    file.renameTo(createFileTXT(file));
+                }
             }
         });
     }
@@ -59,7 +62,7 @@ public class FileJobProcess implements Job {
                 response = false;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.info("El archivo no ha sido enviado {}", file.getPath());
         }
         return response;
     }
@@ -75,27 +78,40 @@ public class FileJobProcess implements Job {
         }
 
         try {
-            log.info("token {}", token);
             sendFile(token.getToken(), sendFile.getPath());
         } catch (TokenExpiredException e) {
-            log.error("error ", e);
+            log.error("error {}", e.getMessage());
             disableToken(token);
 
             token = generateToken();
             sendFile(token.getToken(), sendFile.getPath());
         }
-        log.info("response token {}", token);
     }
 
     private void sendFile(String token, String path) throws TokenExpiredException {
-
-        var response = webClient.put()
-                .uri("/api/v2/configuration/feature/eir/equipments/provisioning", uriBuilder ->
-                        uriBuilder.queryParam("filepath", path).build()
-                )
-                .cookies(cookie -> cookie.set("token", token))
-                .retrieve();
-        log.info("response sendFile {}", Optional.of(Objects.requireNonNull(response.toBodilessEntity().block()).getStatusCode()));
+        try {
+            webClient.put()
+                    .uri("/api/v2/configuration/feature/eir/equipments/provisioning", uriBuilder ->
+                            uriBuilder.queryParam("filepath", path).build()
+                    )
+                    .cookies(cookie -> cookie.set("token", token))
+                    .retrieve()
+                    .onStatus(HttpStatus::is4xxClientError, clientResponse -> {
+                        var description = clientResponse
+                                .bodyToMono(TietoResponseError.class)
+                                .map(TietoResponseError::getDescription);
+                        return description.map(s -> {
+                            log.info(s);
+                            return new BadRequestException(s);
+                        });
+                    })
+                    .toBodilessEntity()
+                    .block();
+            isSend = true;
+        } catch (BadRequestException e) {
+            log.error("error sendFile {}", e.getMessage());
+            isSend = false;
+        }
     }
 
     private void disableToken(TokenDto response) {
@@ -121,7 +137,6 @@ public class FileJobProcess implements Job {
                 )
                 .retrieve()
                 .bodyToMono(TokenDto.class)
-                .onErrorMap(throwable -> new BadRequestException(throwable.getMessage()))
                 .block();
     }
 
