@@ -29,3 +29,6 @@ config:
     local-path: ${FOLDER_LOCAL:D:/file/upload/}
     remote-path: ${FOLDER_REMOTE:/manage_file/upload/}
     temp-path: ${FOLDER_TEMP:/manage_file/upload/temp/}
+logging:
+  file:
+    path: .

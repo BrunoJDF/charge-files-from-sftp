@@ -37,16 +37,17 @@ public class FileJobProcess implements Job {
 
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-        log.info("ejecutando job");
+        log.info("SE INICIA JOB " + jobExecutionContext.getJobDetail().getDescription());
         fileService.getFolderAction(sftpConfiguration.getRemotePath(), sftpConfiguration.getLocalPath());
         List<File> files = fileService.getFolderLocalAction(sftpConfiguration.getLocalPath());
 
         files.forEach(file -> {
             boolean check = notMarked(file);
             if (check) {
-                log.info("Se envia archivo " + file.getPath());
+                log.info("Se inicia envio de archivo " + file.getPath());
                 invokeLoadFile(file);
                 if (isSend) {
+                    log.warn("El archivo " + file.getPath() + " acaba de ser enviado");
                     file.renameTo(createFileTXT(file));
                 }
             }
@@ -62,7 +63,7 @@ public class FileJobProcess implements Job {
                 response = false;
             }
         } catch (Exception e) {
-            log.info("El archivo no ha sido enviado {}", file.getPath());
+            log.warn("El archivo no ha sido enviado {}", file.getPath());
         }
         return response;
     }
@@ -101,7 +102,7 @@ public class FileJobProcess implements Job {
                                 .bodyToMono(TietoResponseError.class)
                                 .map(TietoResponseError::getDescription);
                         return description.map(s -> {
-                            log.info(s);
+                            log.error(s);
                             return new BadRequestException(s);
                         });
                     })

@@ -6,7 +6,6 @@ import com.jcraft.jsch.SftpException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.var;
-import ma.glasnost.orika.MapperFacade;
 import org.springframework.stereotype.Service;
 import pe.bruno.com.fileattachment.application.commons.ProcessStatus;
 import pe.bruno.com.fileattachment.application.dto.file.FileDto;
@@ -33,7 +32,6 @@ public class FileServiceImpl implements FileService {
     private static final String FILE_WAS_CREATED = "File was created";
     private static final String FILE_WAS_OVERWRITTEN = "File was overwritten";
     private final SftpConfiguration configuration;
-    private final MapperFacade mapperFacade;
     private ChannelSftp channelSftp;
 
     @Override
@@ -72,6 +70,7 @@ public class FileServiceImpl implements FileService {
         OutputStream outputStream;
         if (o instanceof LsEntry) {
             LsEntry entry = (LsEntry) o;
+            log.info("Lectura de: " + entry.getFilename());
             if (!entry.getFilename().equals(".") && !entry.getFilename().equals("..") && !entry.getFilename().equals(FOLDER_TEMP)) {
 
                 File file = createFileCSV(new File(localFilePath + entry.getFilename()));
@@ -79,10 +78,8 @@ public class FileServiceImpl implements FileService {
 
                 channelSftp.get(remoteFilePath + entry.getFilename(), outputStream);
                 try {
-                    log.info("try");
                     channelSftp.rename(remoteFilePath + entry.getFilename(), configuration.getTempPath() + entry.getFilename());
                 } catch (SftpException e) {
-                    log.info("catch");
                     channelSftp.mkdir(configuration.getTempPath());
                     channelSftp.rename(remoteFilePath + entry.getFilename(), configuration.getTempPath() + entry.getFilename());
                 }
@@ -97,6 +94,7 @@ public class FileServiceImpl implements FileService {
     }
 
     private File createFileCSV(File localFile) {
+        log.info("Se cambia extension del archivo a copiar");
         var index = localFile.getName().lastIndexOf(".");
         var name = localFile.getName().substring(0, index);
         return new File(localFile.getParent(), name + FILE_EXTENSION);
